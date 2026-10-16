@@ -1,0 +1,43 @@
+﻿{% extends 'recipe/base.html' %}
+{% load static %}
+{% block title %}菜谱列表 - 珍馐菜谱{% endblock %}
+
+{% block content %}
+<div class="heading">
+    <div class="line"></div>
+    <h2>全部菜谱</h2>
+    <p>精选家常美味</p>
+</div>
+
+<!-- 分类筛选 -->
+<div class="card" style="margin-bottom: 60px;">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+        <a href="{% url 'recipe_list' %}" class="ing-tag {% if not current_category %}active{% endif %}"
+           style="text-decoration:none; {% if not current_category %}background: var(--gold); color: var(--bg); border-color: var(--gold);{% endif %}">全部</a>
+        {% for key, name in categories %}
+        <a href="?category={{ key }}" class="ing-tag {% if current_category == key %}active{% endif %}"
+           style="text-decoration:none; {% if current_category == key %}background: var(--gold); color: var(--bg); border-color: var(--gold);{% endif %}">{{ name }}</a>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 菜谱网格 -->
+<div class="recipe-grid">
+    {% for r in recipes %}
+    <div class="recipe-card">
+        <div class="recipe-img">
+            <img src="{% static r.image %}" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="recipe-body">
+            <div class="recipe-name">{{ r.name }}</div>
+            <div class="recipe-meta">难度：{{ r.difficulty }}</div>
+            <a href="{% url 'recipe_detail' r.id %}" class="btn" style="padding: 12px 30px; font-size: 12px;">
+                查看详情
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="card" style="text-align:center;color: var(--text-3); grid-column:1/-1;">这个分类暂时没有菜谱</div>
+    {% endfor %}
+</div>
+{% endblock %}

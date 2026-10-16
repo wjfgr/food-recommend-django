@@ -1,0 +1,527 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}珍馐菜谱{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0d12;
+            --card: rgba(25, 30, 40, 0.9);
+            --gold: #c9a84c;
+            --gold-light: #e6c878;
+            --gold-dark: #8a6f2a;
+            --gold-gradient: linear-gradient(135deg, #c9a84c 0%, #e6c878 50%, #c9a84c 100%);
+            --text: #ffffff;
+            --text-2: #e0ddd8;
+            --text-3: #b0ada8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: "Noto Serif SC", "Cormorant Garamond", serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+            overflow-x: hidden;
+            font-weight: 300;
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--gold); }
+
+        a { color: var(--gold); text-decoration: none; transition: all 0.3s; }
+        a:hover { color: var(--gold-light); }
+
+        /* 导航 */
+        .navbar {
+            background: rgba(3, 5, 8, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 25px 0;
+            transition: all 0.4s ease;
+        }
+        .navbar.scrolled {
+            padding: 18px 0;
+            background: rgba(3, 5, 8, 0.95);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .nav-inner {
+            max-width: 1400px; margin: 0 auto; padding: 0 60px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo {
+            font-family: "Cormorant Garamond", serif;
+            font-size: 1.3rem;
+            letter-spacing: 8px; font-weight: 500;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-links { display: flex; gap: 40px; }
+        .nav-links a {
+            color: var(--text-2); font-size: 0.85rem;
+            letter-spacing: 2px; font-weight: 300;
+            position: relative;
+            padding: 5px 0;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 50%;
+            width: 0; height: 1px;
+            background: var(--gold-gradient);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a:hover { color: var(--gold); }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 150px 60px 100px; position: relative; z-index: 1; }
+
+        /* 标题 */
+        .heading {
+            text-align: center;
+            margin-bottom: 100px;
+        }
+        .heading .line {
+            width: 80px; height: 1px;
+            background: var(--gold-gradient);
+            margin: 0 auto 30px;
+            position: relative;
+        }
+        .heading .line::before, .heading .line::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            width: 7px; height: 7px;
+            background: var(--gold);
+            transform: rotate(45deg);
+        }
+        .heading .line::before { left: -3px; }
+        .heading .line::after { right: -3px; }
+        .heading h2 {
+            font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+            font-size: 2.5rem; font-weight: 400;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+        }
+        .heading p {
+            color: var(--text-3);
+            letter-spacing: 3px;
+            font-size: 0.9rem;
+        }
+
+        /* 卡片 */
+        .card {
+            background: var(--card);
+            backdrop-filter: blur(15px);
+            border-radius: 4px;
+            padding: 50px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(201, 168, 76, 0.1);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        /* 食材标签 */
+        .ing-tag {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 24px;
+            background: rgba(201, 168, 76, 0.05);
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            cursor: pointer; font-size: 14px;
+            transition: all 0.3s ease;
+            color: var(--text-2);
+            letter-spacing: 1px;
+            margin: 4px;
+            user-select: none;
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ing-tag:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(201, 168, 76, 0.2);
+            background: rgba(201, 168, 76, 0.1);
+        }
+        .ing-tag input { accent-color: var(--gold); width: 13px; height: 13px; }
+        .ing-tag:has(input:checked) {
+            background: var(--gold-gradient);
+            color: var(--bg);
+            border-color: var(--gold);
+            box-shadow: 0 5px 25px rgba(201, 168, 76, 0.4);
+        }
+
+        /* 按钮 */
+        .btn {
+            display: inline-block; padding: 16px 50px;
+            border: none; cursor: pointer; font-size: 13px;
+            text-align: center; transition: all 0.4s;
+            font-weight: 400; letter-spacing: 4px;
+            background: var(--gold-gradient);
+            color: var(--bg);
+            position: relative; overflow: hidden;
+            border-radius: 2px;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        .btn:hover::before { left: 100%; }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(201, 168, 76, 0.4);
+        }
+        .btn-block { display: block; width: 100%; }
+
+        /* 菜谱网格 */
+        .recipe-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 50px;
+        }
+        .recipe-card {
+            background: var(--card);
+            backdrop-filter: blur(15px);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(201, 168, 76, 0.1);
+            transition: all 0.5s ease;
+            position: relative;
+        }
+        .recipe-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            z-index: 2;
+        }
+        .recipe-card:hover {
+            border-color: rgba(201, 168, 76, 0.3);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 40px rgba(201, 168, 76, 0.1);
+        }
+        .recipe-img { height: 280px; overflow: hidden; position: relative; }
+        .recipe-img::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 60%;
+            background: linear-gradient(to top, rgba(3,5,8,0.9), transparent);
+        }
+        .recipe-img img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+        .recipe-card:hover .recipe-img img { transform: scale(1.1); }
+        .recipe-body { padding: 35px; }
+        .recipe-name {
+            font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+            font-size: 1.4rem; font-weight: 500;
+            margin-bottom: 15px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+        .recipe-meta { color: var(--text-3); font-size: 13px; margin-bottom: 20px; letter-spacing: 1px; }
+
+        /* 步骤 */
+        .step-item {
+            background: rgba(201, 168, 76, 0.05);
+            padding: 30px; margin-bottom: 20px;
+            border-left: 2px solid var(--gold);
+            transition: all 0.3s ease;
+            border-radius: 0 4px 4px 0;
+            position: relative;
+        }
+        .step-item::before {
+            content: '';
+            position: absolute;
+            left: -6px; top: 50%;
+            width: 10px; height: 10px;
+            background: var(--gold);
+            transform: translateY(-50%) rotate(45deg);
+        }
+        .step-item:hover {
+            background: rgba(201, 168, 76, 0.1);
+            transform: translateX(8px);
+            box-shadow: 0 5px 20px rgba(201, 168, 76, 0.1);
+        }
+        .step-num {
+            color: var(--gold); font-weight: 500;
+            margin-bottom: 10px; letter-spacing: 3px; font-size: 0.9rem;
+        }
+
+        /* 分类 */
+        .category-section { margin-bottom: 60px; }
+        .category-title {
+            font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+            font-size: 1.3rem;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 4px; margin-bottom: 30px;
+            padding-left: 20px; border-left: 2px solid var(--gold);
+            font-weight: 500;
+            position: relative;
+        }
+        .category-title::before {
+            content: '';
+            position: absolute;
+            left: -6px; top: 50%;
+            width: 10px; height: 10px;
+            background: var(--gold);
+            transform: translateY(-50%) rotate(45deg);
+        }
+        .ingredients-list { display: flex; flex-wrap: wrap; }
+
+        @keyframes ripple {
+            to { transform: scale(2); opacity: 0; }
+        }
+
+        /* 跑马灯 */
+        .marquee-band {
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+            padding: 30px 0;
+            background: rgba(201, 168, 76, 0.05);
+            border-top: 1px solid rgba(201, 168, 76, 0.1);
+            border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+            overflow: hidden;
+            white-space: nowrap;
+            margin-bottom: 80px;
+        }
+        .marquee {
+            display: inline-block;
+            animation: marquee 30s linear infinite;
+        }
+        .marquee span {
+            font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+            letter-spacing: 8px;
+            margin: 0 30px;
+            opacity: 0.6;
+        }
+        .marquee .dot {
+            color: var(--gold);
+            opacity: 0.3;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        /* 渐入 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="{% url 'home' %}" class="logo">珍馐菜谱</a>
+            <div class="nav-links">
+                <a href="{% url 'recipe_list' %}">菜谱</a>
+                <a href="{% url 'search' %}">搜索</a>
+                <a href="{% url 'stats' %}">数据统计</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'add_recipe' %}">添加菜谱</a>
+                    <a href="{% url 'my_favorites' %}">收藏</a>
+                    <a href="/logout/">退出</a>
+                {% else %}
+                    <a href="/login/">登录</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <canvas id="stars" style="
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        z-index: 0;
+        pointer-events: none;
+    "></canvas>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 渐入动画
+            const elements = document.querySelectorAll('.heading, .category-section, .recipe-card, .card, .step-item');
+            elements.forEach(el => el.classList.add('fade-in'));
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('visible');
+                });
+            }, { threshold: 0.1 });
+            elements.forEach(el => observer.observe(el));
+
+            // 导航栏滚动效果
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // 鼠标跟随光斑效果
+            const cursor = document.createElement('div');
+            cursor.style.cssText = `
+                position: fixed;
+                width: 20px; height: 20px;
+                background: radial-gradient(circle, rgba(201,168,76,0.4) 0%, transparent 70%);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 9999;
+                transform: translate(-50%, -50%);
+                transition: width 0.3s, height 0.3s;
+            `;
+            document.body.appendChild(cursor);
+            
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            });
+            
+            document.querySelectorAll('.ing-tag, .recipe-card, .btn').forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursor.style.width = '60px';
+                    cursor.style.height = '60px';
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursor.style.width = '20px';
+                    cursor.style.height = '20px';
+                });
+            });
+
+            // 食材选中波纹效果
+            document.querySelectorAll('.ing-tag').forEach(tag => {
+                tag.addEventListener('click', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const ripple = document.createElement('div');
+                    const size = Math.max(rect.width, rect.height);
+                    
+                    ripple.style.cssText = `
+                        position: absolute;
+                        left: ${e.clientX - rect.left - size/2}px;
+                        top: ${e.clientY - rect.top - size/2}px;
+                        width: ${size}px;
+                        height: ${size}px;
+                        background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+                        border-radius: 50%;
+                        transform: scale(0);
+                        animation: ripple 0.6s ease-out;
+                        pointer-events: none;
+                    `;
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => ripple.remove(), 600);
+                });
+            });
+
+            // 卡片3D倾斜效果
+            document.querySelectorAll('.recipe-card').forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = (y - centerY) / 20;
+                    const rotateY = (centerX - x) / 20;
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+                });
+            });
+
+            // 星空粒子效果
+            const canvas = document.getElementById('stars');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const stars = [];
+            for(let i = 0; i < 300; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 2,
+                    speed: Math.random() * 0.5,
+                    opacity: Math.random() * 0.8 + 0.2,
+                    twinkle: Math.random() * 0.02
+                });
+            }
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                stars.forEach(star => {
+                    star.opacity += star.twinkle;
+                    if(star.opacity > 1 || star.opacity < 0.2) star.twinkle = -star.twinkle;
+                    
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(201, 168, 76, ${star.opacity})`;
+                    ctx.fill();
+                    
+                    star.y += star.speed;
+                    if(star.y > canvas.height) star.y = 0;
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+            
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+

@@ -1,0 +1,88 @@
+﻿{% extends 'recipe/base.html' %}
+{% load static %}
+{% block title %}推荐结果 - 珍馐菜谱{% endblock %}
+
+{% block content %}
+<div class="heading">
+    <div class="line"></div>
+    <h2>推荐结果</h2>
+    <p>你选了 {{ selected|length }} 种食材</p>
+    <div style="margin-top: 20px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+        {% for s in selected %}<span class="ing-tag" style="margin: 2px;">{{ s.name }}</span>{% endfor %}
+    </div>
+</div>
+
+<!-- 跑马灯灯带 -->
+<div class="marquee-band" style="margin-bottom: 60px;">
+    <div class="marquee">
+        <span>食材</span><span class="dot">✦</span>
+        <span>烹饪</span><span class="dot">✦</span>
+        <span>美味</span><span class="dot">✦</span>
+        <span>家常</span><span class="dot">✦</span>
+        <span>烟火气</span><span class="dot">✦</span>
+        <span>色香味</span><span class="dot">✦</span>
+        <span>慢生活</span><span class="dot">✦</span>
+        <span>爱与美食</span><span class="dot">✦</span>
+        <span>食材</span><span class="dot">✦</span>
+        <span>烹饪</span><span class="dot">✦</span>
+        <span>美味</span><span class="dot">✦</span>
+        <span>家常</span><span class="dot">✦</span>
+        <span>烟火气</span><span class="dot">✦</span>
+        <span>色香味</span><span class="dot">✦</span>
+        <span>慢生活</span><span class="dot">✦</span>
+        <span>爱与美食</span><span class="dot">✦</span>
+    </div>
+</div>
+
+{% if msg %}
+<div class="card" style="text-align:center;color: var(--text-3);">{{ msg }}</div>
+{% endif %}
+
+{% if perfect %}
+<div class="category-title" style="margin-bottom: 30px;">完美匹配</div>
+<div class="recipe-grid">
+    {% for item in perfect %}
+    <div class="recipe-card">
+        <div class="recipe-img">
+            <img src="{% static item.recipe.image %}" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="recipe-body">
+            <div class="recipe-name">{{ item.recipe.name }}</div>
+            <div class="recipe-meta">匹配度 {{ item.ratio|floatformat:0 }}%</div>
+            <a href="{% url 'recipe_detail' item.recipe.id %}" class="btn" style="padding: 10px 24px; font-size: 12px;">
+                查看详情
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if near %}
+<div class="category-title" style="margin: 60px 0 30px;">差一点也能做</div>
+<div class="recipe-grid">
+    {% for item in near %}
+    <div class="recipe-card">
+        <div class="recipe-img">
+            <img src="{% static 'images/dish-soup.jpg' %}" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="recipe-body">
+            <div class="recipe-name">{{ item.recipe.name }}</div>
+            <div class="recipe-meta">缺：{{ item.missing|join:"、" }}</div>
+            <a href="{% url 'recipe_detail' item.recipe.id %}" class="btn" style="padding: 10px 24px; font-size: 12px;">
+                查看详情
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if not perfect and not near and not msg %}
+<div class="card" style="text-align:center;color: var(--text-3);">
+    <p>这些食材组合暂时没有匹配的菜谱</p>
+    <p style="margin-top:20px;"><a href="{% url 'home' %}" class="btn">重新选择</a></p>
+</div>
+{% endif %}
+{% endblock %}
+

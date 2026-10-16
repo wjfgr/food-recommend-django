@@ -1,0 +1,139 @@
+﻿{% extends 'recipe/base.html' %}
+{% load static %}
+{% block title %}珍馐菜谱{% endblock %}
+
+{% block content %}
+<!-- 全屏Hero -->
+<div style="
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    margin-top: -150px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+">
+    <img src="{% static 'images/hero-bg.jpg' %}" 
+         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8);">
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: 
+        radial-gradient(circle at 30% 20%, rgba(201,168,76,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(201,168,76,0.1) 0%, transparent 50%),
+        linear-gradient(135deg, rgba(3,5,8,0.5) 0%, rgba(3,5,8,0.3) 50%, rgba(3,5,8,0.7) 100%);
+    "></div>
+    
+    <div style="position: relative; z-index: 1; text-align: center;">
+        <div style="
+            width: 100px; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 0 auto 50px;
+            position: relative;
+        ">
+            <div style="
+                position: absolute; left: -5px; top: -4px;
+                width: 9px; height: 9px;
+                background: var(--gold);
+                transform: rotate(45deg);
+            "></div>
+            <div style="
+                position: absolute; right: -5px; top: -4px;
+                width: 9px; height: 9px;
+                background: var(--gold);
+                transform: rotate(45deg);
+            "></div>
+        </div>
+        
+        <h1 style="
+            font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+            font-size: 7rem;
+            font-weight: 400;
+            background: linear-gradient(135deg, #e6c878 0%, #c9a84c 50%, #e6c878 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 25px;
+            margin-bottom: 60px;
+            text-shadow: 0 0 60px rgba(201, 168, 76, 0.3);
+       ;">珍馐</h1>
+        
+        <div style="
+            width: 100px; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 0 auto 50px;
+            position: relative;
+        ">
+            <div style="
+                position: absolute; left: -5px; top: -4px;
+                width: 9px; height: 9px;
+                background: var(--gold);
+                transform: rotate(45deg);
+            "></div>
+            <div style="
+                position: absolute; right: -5px; top: -4px;
+                width: 9px; height: 9px;
+                background: var(--gold);
+                transform: rotate(45deg);
+            "></div>
+        </div>
+        
+        <a href="#ingredients" class="btn">开始探索</a>
+    </div>
+</div>
+
+<!-- 跑马灯 -->
+<div class="marquee-band">
+    <div class="marquee">
+        <span>食材</span><span class="dot">✦</span>
+        <span>烹饪</span><span class="dot">✦</span>
+        <span>美味</span><span class="dot">✦</span>
+        <span>家常</span><span class="dot">✦</span>
+        <span>烟火气</span><span class="dot">✦</span>
+        <span>色香味</span><span class="dot">✦</span>
+        <span>慢生活</span><span class="dot">✦</span>
+        <span>爱与美食</span><span class="dot">✦</span>
+        <span>食材</span><span class="dot">✦</span>
+        <span>烹饪</span><span class="dot">✦</span>
+        <span>美味</span><span class="dot">✦</span>
+        <span>家常</span><span class="dot">✦</span>
+        <span>烟火气</span><span class="dot">✦</span>
+        <span>色香味</span><span class="dot">✦</span>
+        <span>慢生活</span><span class="dot">✦</span>
+        <span>爱与美食</span><span class="dot">✦</span>
+    </div>
+</div>
+
+<!-- 食材选择 -->
+<div id="ingredients">
+    <div class="heading">
+        <div class="line"></div>
+        <h2>选食材</h2>
+        <p>勾选你家里现有的食材</p>
+    </div>
+
+<form method="post" action="{% url 'match' %}">
+    {% csrf_token %}
+    {% for category_key, category_name in categories.items %}
+    <div class="category-section">
+        <div class="category-title">{{ category_name }}</div>
+        <div class="ingredients-list">
+            {% for ing in ingredients %}
+                {% if ing.category == category_key %}
+                <label class="ing-tag">
+                    <input type="checkbox" name="ingredients" value="{{ ing.id }}">
+                    {{ ing.name }}
+                </label>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-block" style="margin-top: 80px;">
+        推荐菜谱
+    </button>
+</form>
+</div>
+{% endblock %}
+

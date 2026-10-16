@@ -1,0 +1,42 @@
+﻿{% extends 'recipe/base.html' %}
+{% load static %}
+{% block title %}我的收藏 - 珍馐菜谱{% endblock %}
+
+{% block content %}
+<div class="heading">
+    <div class="line"></div>
+    <h2>我的收藏</h2>
+    <p>你收藏了 {{ favorites|length }} 道菜</p>
+</div>
+
+{% if favorites %}
+<div class="recipe-grid">
+    {% for fav in favorites %}
+    <div class="recipe-card">
+        <div class="recipe-img">
+            <img src="{% static fav.recipe.image %}" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="recipe-body">
+            <div class="recipe-name">{{ fav.recipe.name }}</div>
+            <div class="recipe-meta">
+                <span class="ing-tag">{{ fav.recipe.get_category_display }}</span>
+            </div>
+            <a href="{% url 'recipe_detail' fav.recipe.id %}" class="btn" style="padding: 10px 24px; font-size: 12px;">
+                查看详情 →
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card" style="text-align: center; padding: 80px 20px; max-width: 600px; margin: 0 auto;">
+    <div style="width: 60px; height: 60px; border: 1px solid rgba(201, 168, 76, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px;">
+        <span style="color: var(--gold); font-size: 24px;">♡</span>
+    </div>
+    <h3 style="color: var(--text); margin-bottom: 16px; font-family: 'Noto Serif SC', serif; font-weight: 400; letter-spacing: 2px;">还没有收藏任何菜谱</h3>
+    <p style="color: var(--text-3); margin-bottom: 40px; letter-spacing: 1px;">去首页选食材，找到你喜欢的菜收藏吧</p>
+    <a href="{% url 'home' %}" class="btn">去发现菜谱</a>
+</div>
+{% endif %}
+{% endblock %}
+

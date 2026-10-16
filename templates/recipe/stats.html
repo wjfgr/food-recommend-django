@@ -1,0 +1,86 @@
+﻿{% extends 'recipe/base.html' %}
+{% block title %}数据统计 - 珍馐菜谱{% endblock %}
+
+{% block content %}
+<div class="heading">
+    <div class="line"></div>
+    <h2>数据统计</h2>
+    <p>看看我们的菜谱库数据</p>
+</div>
+
+<div class="card" style="margin-bottom: 40px;">
+    <h3 style="color: var(--gold); margin-bottom: 24px; font-weight: 400; letter-spacing: 2px; font-family: 'Noto Serif SC', serif;">收藏最多的菜 Top5</h3>
+    <div id="chart_fav" style="width:100%;height:300px;"></div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+    <div class="card">
+        <h3 style="color: var(--gold); margin-bottom: 24px; font-weight: 400; letter-spacing: 2px; font-family: 'Noto Serif SC', serif;">菜谱分类分布</h3>
+        <div id="chart_cat" style="width:100%;height:300px;"></div>
+    </div>
+    
+    <div class="card">
+        <h3 style="color: var(--gold); margin-bottom: 24px; font-weight: 400; letter-spacing: 2px; font-family: 'Noto Serif SC', serif;">评论最多的菜 Top5</h3>
+        <div id="chart_comment" style="width:100%;height:300px;"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script>
+var favData = {{ top_fav_json|safe }};
+var catLabels = {{ cat_labels_json|safe }};
+var catData = {{ cat_data_json|safe }};
+var commentData = {{ top_comment_json|safe }};
+
+var c1 = echarts.init(document.getElementById('chart_fav'));
+c1.setOption({
+    xAxis: { 
+        type: 'category', 
+        data: favData.map(x => x.name), 
+        axisLabel: {rotate: 30, color: '#888', fontSize: 12},
+        axisLine: {lineStyle: {color: 'rgba(201,168,76,0.3)'}}
+    },
+    yAxis: { 
+        type: 'value',
+        axisLabel: {color: '#888'},
+        splitLine: {lineStyle: {color: 'rgba(201,168,76,0.1)'}}
+    },
+    series: [{ 
+        type: 'bar', 
+        data: favData.map(x => x.count), 
+        itemStyle: {color: '#b8974a'} 
+    }]
+});
+
+var c2 = echarts.init(document.getElementById('chart_cat'));
+c2.setOption({
+    series: [{ 
+        type: 'pie', 
+        radius: '60%',
+        label: {color: '#aaa'},
+        data: catLabels.map((l, i) => ({name: l, value: catData[i]})) 
+    }],
+    color: ['#b8974a', '#8b6914', '#d4af37', '#6b5410', '#c9a84c']
+});
+
+var c3 = echarts.init(document.getElementById('chart_comment'));
+c3.setOption({
+    xAxis: { 
+        type: 'category', 
+        data: commentData.map(x => x.name), 
+        axisLabel: {rotate: 30, color: '#888', fontSize: 12},
+        axisLine: {lineStyle: {color: 'rgba(201,168,76,0.3)'}}
+    },
+    yAxis: { 
+        type: 'value',
+        axisLabel: {color: '#888'},
+        splitLine: {lineStyle: {color: 'rgba(201,168,76,0.1)'}}
+    },
+    series: [{ 
+        type: 'bar', 
+        data: commentData.map(x => x.count), 
+        itemStyle: {color: '#8b6914'} 
+    }]
+});
+</script>
+{% endblock %}

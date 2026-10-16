@@ -1,0 +1,37 @@
+﻿{% extends 'recipe/base.html' %}
+{% block title %}搜索 - 珍馐菜谱{% endblock %}
+
+{% block content %}
+<div class="heading">
+    <div class="line"></div>
+    <h2>搜索菜谱</h2>
+    <p>输入菜名，找到你想做的菜</p>
+</div>
+
+<div class="card">
+    <form method="get" action="{% url 'search' %}">
+        <input type="text" name="q" value="{{ q }}" placeholder="输入菜名，如：番茄炒蛋"
+            style="width:100%;padding:14px 20px;background: rgba(201, 168, 76, 0.05);border: 1px solid rgba(201, 168, 76, 0.2);border-radius: 2px;color: var(--text);font-size: 14px;outline: none;box-sizing: border-box;">
+        <button type="submit" class="btn btn-block" style="margin-top: 20px;">搜索</button>
+    </form>
+</div>
+
+{% if q %}
+<div style="margin: 40px 0 20px; color: var(--text-2); letter-spacing: 1px;">
+    搜索"{{ q }}"，找到 {{ results|length }} 个结果
+</div>
+
+{% for r in results %}
+<div class="card" style="margin-bottom: 16px;">
+    <a href="{% url 'recipe_detail' r.id %}" style="text-decoration:none;color: var(--text); display: flex; justify-content: space-between; align-items: center;">
+        <strong style="font-family: 'Noto Serif SC', serif;">{{ r.name }}</strong>
+        <span class="ing-tag">{{ r.get_category_display }}</span>
+    </a>
+</div>
+{% empty %}
+<div class="card" style="text-align:center;color: var(--text-3);">
+    没找到相关菜谱，换个关键词试试？
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}

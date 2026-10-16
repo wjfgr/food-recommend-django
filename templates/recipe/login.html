@@ -1,0 +1,55 @@
+﻿{% extends 'recipe/base.html' %}
+{% block title %}登录 - 珍馐菜谱{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 500px; margin: 0 auto;">
+    <div class="heading">
+        <div class="line"></div>
+        <h2>登录</h2>
+        <p>欢迎回来</p>
+    </div>
+    
+    {% if form.errors %}
+    <div style="background: rgba(231, 76, 60, 0.1); border: 1px solid rgba(231, 76, 60, 0.3); padding: 16px; margin-bottom: 24px; border-radius: 2px;">
+        <div style="color: #e74c3c; font-size: 13px;">用户名或密码错误，请重试</div>
+    </div>
+    {% endif %}
+    
+    <form method="post">
+        {% csrf_token %}
+        <div style="margin-bottom: 24px;">
+            <label style="display: block; margin-bottom: 10px; color: var(--text-2); letter-spacing: 1px; font-size: 13px;">用户名</label>
+            {{ form.username }}
+        </div>
+        <div style="margin-bottom: 36px;">
+            <label style="display: block; margin-bottom: 10px; color: var(--text-2); letter-spacing: 1px; font-size: 13px;">密码</label>
+            {{ form.password }}
+        </div>
+        <button type="submit" class="btn btn-block">登录</button>
+    </form>
+    
+    <div style="text-align: center; margin-top: 32px; color: var(--text-3); letter-spacing: 1px;">
+        还没有账号？<a href="{% url 'register' %}" style="color: var(--gold);">立即注册</a>
+    </div>
+</div>
+
+<style>
+    input[type="text"], input[type="password"] {
+        width: 100%;
+        padding: 14px 18px;
+        background: rgba(201, 168, 76, 0.05);
+        border: 1px solid rgba(201, 168, 76, 0.2);
+        color: var(--text);
+        font-size: 14px;
+        border-radius: 2px;
+        outline: none;
+        transition: all 0.3s;
+        box-sizing: border-box;
+        font-family: 'Noto Serif SC', serif;
+    }
+    input[type="text"]:focus, input[type="password"]:focus {
+        border-color: var(--gold);
+        background: rgba(201, 168, 76, 0.1);
+    }
+</style>
+{% endblock %}
