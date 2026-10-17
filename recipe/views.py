@@ -10,6 +10,7 @@ import json
 RECIPE_IMAGE_MAP = {
     # 荤菜
     '番茄炒蛋': 'dish-fanqiechaodan.jpg',
+    '快手西红柿炒鸡蛋': 'dish-fanqiechaodan.jpg',
     '红烧肉': 'dish-hongshaorou.jpg',
     '清蒸鲈鱼': 'dish-qingzhengyu.jpg',
     '八爪鱼': 'dish-bazhuayu.jpg',
@@ -87,6 +88,42 @@ RECIPE_IMAGE_MAP = {
     '凉拌木耳': 'dish-liangbanmuer.jpg',
     '糖拌西红柿': 'dish-tangbanxihongshi.jpg',
     '凉拌黄瓜': 'dish-liangbanhuanggua.jpg',
+    # 新增24道
+    '干锅花菜': 'dish-ganguohuacai.jpg',
+    '香煎豆腐': 'dish-xiangjiandoufu.jpg',
+    '洋葱爆腰花': 'dish-yangcongbaoyaohua.jpg',
+    '清炒藕丁': 'dish-qingchaouoding.jpg',
+    '麻辣鸭脖': 'dish-malayeyabo.jpg',
+    '捞汁杏鲍菇': 'dish-laozhixingbaogu.jpg',
+    '素烧茄子': 'dish-sushaoqiezi.jpg',
+    '白菜豆腐汤': 'dish-baidoufutang.jpg',
+    '懒人饭团': 'dish-larenfantuan.jpg',
+    '卤啤酒鸭': 'dish-lupijiuya.jpg',
+    '面疙瘩汤': 'dish-miangetang.jpg',
+    '蒜蓉蒸茄子': 'dish-rongsunzengqiezi2.jpg',
+    '炒豆芽': 'dish-chaodouya.jpg',
+    '凉拌秋葵': 'dish-liangbanqiukui.jpg',
+    '烤红薯': 'dish-kaohongshu.jpg',
+    '煮玉米': 'dish-zhuyumi.jpg',
+    '蒸南瓜': 'dish-zhengnangua.jpg',
+    '五香花生': 'dish-wuxianghuasheng.jpg',
+    '煮毛豆': 'dish-zhumaodou.jpg',
+    '凉拌海带丝': 'dish-liangbanhaidaisi.jpg',
+    '凉拌豆腐丝': 'dish-liangbandoufusi.jpg',
+    '卤煮花生': 'dish-luzhuhuasheng.jpg',
+    '凉拌藕片': 'dish-liangbanoupian.jpg',
+    '油炸花生': 'dish-youzhahuasheng.jpg',
+    '西红柿鸡蛋面': 'dish-xihongshijidanmian.jpg',
+    '鸡蛋饼': 'dish-jidanbing.jpg',
+    '胡辣汤': 'dish-hulatang.jpg',
+    '冬瓜排骨汤': 'dish-dongguapaigu.jpg',
+    '冬阴功汤': 'dish-dongyingongtang.jpg',
+    '冬瓜丸子汤': 'dish-dongguawanzi.jpg',
+    '萝卜排骨汤': 'dish-luobopaigu.jpg',
+    '菌菇汤': 'dish-jungutang.jpg',
+    '老母鸡汤': 'dish-jitang.jpg',
+    '鸡蛋汤': 'dish-jidantang.jpg',
+    '豆腐汤': 'dish-doufutang2.jpg'
 }
 
 def get_recipe_image(recipe):
@@ -95,39 +132,7 @@ def get_recipe_image(recipe):
     for keyword, img_file in RECIPE_IMAGE_MAP.items():
         if keyword in recipe.name:
             return f'images/{img_file}'
-    # 2. 再匹配核心食材关键词（更宽松的匹配，越具体的越靠前）
-    name = recipe.name
-    if '番茄' in name or '西红柿' in name:
-        return 'images/dish-fanqiechaodan.jpg'
-    elif '鸡蛋' in name or '蒸蛋' in name or '蛋羹' in name or '煎蛋' in name:
-        return 'images/dish-zhengdangeng.jpg'
-    elif '鱼' in name:
-        return 'images/dish-qingzhengyu.jpg'
-    elif '红烧肉' in name or '红烧排骨' in name:
-        return 'images/dish-hongshaorou.jpg'
-    elif '鸡' in name and '翅' in name:
-        return 'images/dish-kelejichi.jpg'
-    elif '鸡' in name:
-        return 'images/dish-gongbaojiding.jpg'
-    elif '排骨' in name:
-        return 'images/dish-tangupigugu.jpg'
-    elif '豆腐' in name:
-        return 'images/dish-mapodoufu.jpg'
-    elif '土豆' in name:
-        return 'images/dish-tudousi.jpg'
-    elif '青菜' in name or '白菜' in name:
-        return 'images/dish-qingcai.jpg'
-    elif '面' in name:
-        return 'images/dish-zhajiangmian.jpg'
-    elif '粥' in name:
-        return 'images/dish-xiaomizhou.jpg'
-    elif '饺子' in name:
-        return 'images/dish-jiaozi.jpg'
-    elif '包子' in name:
-        return 'images/dish-baozi.jpg'
-    elif '米饭' in name or '炒饭' in name:
-        return 'images/dish-mifan.jpg'
-    # 3. 最后按分类返回通用图
+    # 2. 没有专属图的，按分类返回通用图
     if recipe.category == 'soup':
         return 'images/dish-soup.jpg'
     elif recipe.category == 'staple':
@@ -136,9 +141,6 @@ def get_recipe_image(recipe):
         return 'images/dish-cold.jpg'
     else:
         return 'images/dish-veg.jpg'
-
-
-
 
 def home(request):
     ingredients = Ingredient.objects.all().order_by('category', 'name')
@@ -155,6 +157,11 @@ INGREDIENT_SYNONYMS = {
     '土豆': ['马铃薯'],
     '马铃薯': ['土豆'],
     '鸡蛋': ['鸡子'],
+    '猪肉': ['五花肉', '瘦肉', '里脊肉', '肉片'],
+    '五花肉': ['猪肉', '瘦肉'],
+    '牛肉': ['牛腩', '肥牛'],
+    '鸡肉': ['鸡腿', '鸡翅', '鸡胸'],
+    '鱼': ['鲈鱼', '带鱼', '草鱼'],
 }
 
 def get_all_synonyms(name):
@@ -181,7 +188,7 @@ def match_recipes(request):
         selected_names = expanded_names
         # 基础调料，默认都有，不算缺失
         BASIC_SEASONINGS = {'盐', '食用油', '油', '葱', '姜', '蒜', '酱油', '生抽', '老抽', '糖', '料酒', '胡椒粉', '花椒'}
-        
+
         perfect, near = [], []
         for recipe in Recipe.objects.all():
             needed = set(recipe.ingredients.values_list('name', flat=True))
@@ -191,20 +198,20 @@ def match_recipes(request):
             # 缺失的食材里，去掉基础调料
             missing = (needed - selected_names) - BASIC_SEASONINGS
             ratio = len(have) / len(needed) if needed else 0
-            if len(have) == 0:
-                continue
-            if len(selected_names) == 1:
-                near.append({'recipe': recipe, 'ratio': ratio, 'missing': sorted(missing)})
-            elif len(missing) == 0:
-                perfect.append({'recipe': recipe, 'ratio': ratio, 'missing': []})
+            if len(have) < len(selected_ids): continue
+            # 计算是否有专属图
+            has_custom = 1 if any(kw in recipe.name for kw in RECIPE_IMAGE_MAP.keys()) else 0
+            if len(selected_ids) == 1:
+                near.append({'recipe': recipe, 'ratio': ratio, 'missing': sorted(missing), 'has_custom': has_custom})
+            elif len(missing) == 0 and ratio >= 0.3:
+                perfect.append({'recipe': recipe, 'ratio': ratio, 'missing': [], 'has_custom': has_custom})
             elif len(missing) <= 2:
-                near.append({'recipe': recipe, 'ratio': ratio, 'missing': sorted(missing)})
-        
+                near.append({'recipe': recipe, 'ratio': ratio, 'missing': sorted(missing), 'has_custom': has_custom})
+
+        # 排序：1.有专属图的优先 2.菜名里有选中食材的优先 3.匹配度高的优先 4.缺的少的优先
         def sort_key(item):
-            recipe = item['recipe']
-            name_match = 1 if any(ing_name in recipe.name for ing_name in selected_names) else 0
-            return (-name_match, -item['ratio'], len(item['missing']))
-        
+            return (-item['has_custom'], -item['ratio'], len(item['missing']))
+
         perfect.sort(key=sort_key)
         near.sort(key=sort_key)
         # 给每个recipe对象加上image属性
@@ -216,7 +223,6 @@ def match_recipes(request):
             'perfect': perfect, 'near': near, 'selected': selected_qs,
         })
     return redirect('home')
-
 
 def recipe_list(request):
     category = request.GET.get('category', '')
@@ -403,6 +409,11 @@ def add_recipe(request):
     return render(request, 'recipe/add_recipe.html', {
         'categories': Recipe.CATEGORY_CHOICES,
     })
+
+
+
+
+
 
 
 

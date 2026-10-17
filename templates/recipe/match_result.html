@@ -48,7 +48,6 @@
         </div>
         <div class="recipe-body">
             <div class="recipe-name">{{ item.recipe.name }}</div>
-            <div class="recipe-meta">匹配度 {{ item.ratio|floatformat:0 }}%</div>
             <a href="{% url 'recipe_detail' item.recipe.id %}" class="btn" style="padding: 10px 24px; font-size: 12px;">
                 查看详情
             </a>
@@ -64,7 +63,7 @@
     {% for item in near %}
     <div class="recipe-card">
         <div class="recipe-img">
-            <img src="{% static 'images/dish-soup.jpg' %}" style="width: 100%; height: 100%; object-fit: cover;">
+            <img src="{% static item.recipe.image %}" style="width: 100%; height: 100%; object-fit: cover;">
         </div>
         <div class="recipe-body">
             <div class="recipe-name">{{ item.recipe.name }}</div>
@@ -85,4 +84,5 @@
 </div>
 {% endif %}
 {% endblock %}
+
 
